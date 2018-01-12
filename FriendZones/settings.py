@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'friendsZones.apps.FriendszonesConfig',
-    'django_facebook',
     'rest_framework',
 ]
 
@@ -141,6 +140,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-
-FACEBOOK_APP_ID = str('2091108864451666')
-FACEBOOK_APP_SECRET = str('f9cb0d7032c5f0870574dfb88d1efad3')

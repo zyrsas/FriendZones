@@ -66,10 +66,63 @@ def GetAllFavorites(request):
             body_unicode = request.body.decode('utf-8')
             body = json.loads(body_unicode)
 
-            response = Favorites.objects.filter(userID=body['user_id'])
+            response = Favorites.objects.filter(userID=body['user_id']).values('otherUser')
+
+            response_users = []
+            for item in response:
+                users = User.objects.filter(id=item['otherUser']).values(
+                                                                        'id',
+                                                                        'name',
+                                                                        'gender',
+                                                                        'lookingFor',
+                                                                        'radius',
+                                                                        'isNotification',
+                                                                        'isBeacon',
+                                                                        'subscriptionDate',
+                                                                        'biography',
+                                                                        'profilePictureURL',
+                                                                        'AuthenticationToken',
+                                                                        'facebookToken',
+                                                                        )
+                response_users.append(list(users))
+
+            return Response({"User": response_users})
+        except KeyError:
+            return Response({"Null": "Null"})
+        except ValueError:
+            return Response({"Null": "Null"})
+        except:
+            return Response({"Null": "Null"})
 
 
-            return Response()
+@api_view(['POST', ])
+def UpdateUser(request):
+    if request.method == "POST":
+        try:
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+
+            response = Favorites.objects.filter(userID=body['user_id']).values('otherUser')
+
+            response_users = []
+            for item in response:
+                users = User.objects.filter(id=item['otherUser']).values(
+                                                                        'id',
+                                                                        'name',
+                                                                        'gender',
+                                                                        'lookingFor',
+                                                                        'radius',
+                                                                        'isNotification',
+                                                                        'isBeacon',
+                                                                        'subscriptionDate',
+                                                                        'biography',
+                                                                        'profilePictureURL',
+                                                                        'AuthenticationToken',
+                                                                        'facebookToken',
+                                                                        )
+                response_users.append(list(users))
+
+            return Response({"User": response_users})
         except KeyError:
             return Response({"Null": "Null"})
         except ValueError:

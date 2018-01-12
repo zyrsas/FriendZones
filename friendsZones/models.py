@@ -14,6 +14,9 @@ class User(models.Model):
     AuthenticationToken = models.CharField(max_length=150, blank=True)
     facebookToken = models.CharField(max_length=150, blank=True)
 
+    def __str__(self):
+        return str(self.id) + str(self.name)
+
 
 class Favorites(models.Model):
     userID = models.IntegerField()

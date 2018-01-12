@@ -16,8 +16,12 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from friendsZones import views
+
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^sing_in/$', views.SignIn),
     url(r'^favorites/$', views.AddRemoveFavorites),
+    url(r'^all_favorites/$', views.GetAllFavorites),
+    url(r'^update_user/$', views.UpdateUser),
 ]
