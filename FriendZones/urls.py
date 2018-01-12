@@ -18,5 +18,6 @@ from django.contrib import admin
 from friendsZones import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^sing_in/$', views.SignIn)
+    url(r'^sing_in/$', views.SignIn),
+    url(r'^favorites/$', views.AddRemoveFavorites),
 ]
