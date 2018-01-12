@@ -2,32 +2,31 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from friendsZones.models import User
+import uuid
+import random
+import json
 
 
 @api_view(['POST', ])
 def SignIn(request):
     if request.method == "POST":
         try:
-            if User.objects.filter(name=request.GET.get('user'),
-                                   password=request.GET.get('pass')).count() == 0:
-                return Response({"Null": "Null"}, )
-            else:
-                if request.GET.get('regID') != None:
-                    reg_ID = User.objects.filter(name=request.GET.get('user'), password=request.GET.get('pass'))
-                    print(list(reg_ID))
-                    for i in reg_ID:
-                        i.regID = request.GET.get('regID')
-                        i.save()
-                        print("Update")
-                data_for_json = User.objects.filter(name=request.GET.get('user')).values('id',
-                                                                                         'name',
-                                                                                         'departmen_id',
-                                                                                         'departmen__name',
-                                                                                         'access'
-                                                                                         )
-                tmp = list(data_for_json)[0]
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+            print(body['FacebookToken'])
+            if User.objects.filter(facebookToken=body['FacebookToken']).count() == 0:
 
-                return Response(tmp)
+                token = str(uuid.uuid1(random.randint(0, 281474976710655)))
+                print(token)
+
+                new = User(facebookToken=str(body['FacebookToken']), AuthenticationToken=token)
+                new.save()
+
+            user = User.objects.filter(facebookToken=body['FacebookToken']).values(
+                                                                                    'AuthenticationToken',
+                                                                                    'id'
+                                                                                   )
+            return Response(list(user)[0])
         except KeyError:
             return Response({"Null": "Null"})
         except ValueError:
