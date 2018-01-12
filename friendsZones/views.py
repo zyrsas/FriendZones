@@ -101,28 +101,33 @@ def UpdateUser(request):
         try:
             body_unicode = request.body.decode('utf-8')
             body = json.loads(body_unicode)
+            user_id = body['user_id']
 
-            response = Favorites.objects.filter(userID=body['user_id']).values('otherUser')
+            for i in body["UserData"]:
+                if i == "name":
+                    print(body["UserData"]['name'])
+                elif i == "biography":
+                    print(body["UserData"]['biography'])
+                elif i == "gender":
+                    print(body["UserData"]['gender'])
+                elif i == "lookingFor":
+                    print(body["UserData"]['lookingFor'])
+                elif i == "isNotification":
+                    print(body["UserData"]['isNotification'])
+                elif i == "subscriptionDate":
+                    print(body["UserData"]['subscriptionDate'])
+                elif i == "profilePictureURL":
+                    print(body["UserData"]['profilePictureURL'])
+                elif i == "isBeacon":
+                    print(body["UserData"]['isBeacon'])
+                elif i == "AuthenticationToken":
+                    print(body["UserData"]['AuthenticationToken'])
+                elif i == "radius":
+                    print(body["UserData"]['radius'])
+                elif i == "facebookToken":
+                    print(body["UserData"]['facebookToken'])
 
-            response_users = []
-            for item in response:
-                users = User.objects.filter(id=item['otherUser']).values(
-                                                                        'id',
-                                                                        'name',
-                                                                        'gender',
-                                                                        'lookingFor',
-                                                                        'radius',
-                                                                        'isNotification',
-                                                                        'isBeacon',
-                                                                        'subscriptionDate',
-                                                                        'biography',
-                                                                        'profilePictureURL',
-                                                                        'AuthenticationToken',
-                                                                        'facebookToken',
-                                                                        )
-                response_users.append(list(users))
-
-            return Response({"User": response_users})
+            return Response({"User": True})
         except KeyError:
             return Response({"Null": "Null"})
         except ValueError:
