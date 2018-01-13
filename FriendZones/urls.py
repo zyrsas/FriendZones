@@ -24,4 +24,6 @@ urlpatterns = [
     url(r'^favorites/$', views.AddRemoveFavorites),
     url(r'^all_favorites/$', views.GetAllFavorites),
     url(r'^update_user/$', views.UpdateUser),
+    url(r'^block/$', views.AddRemoveBlock),
+    url(r'^push/$', views.SendPushNotification),
 ]

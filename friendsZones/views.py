@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from friendsZones.models import User, Favorites
+from friendsZones.models import User, Favorites, Block
 import uuid
 import random
 import json
@@ -181,6 +181,55 @@ def UpdateUser(request):
 
 
             return Response({"DataUser": list(users)[0]})
+        except KeyError:
+            return Response({"Null": "Null"})
+        except ValueError:
+            return Response({"Null": "Null"})
+        except:
+            return Response({"Null": "Null"})
+
+
+@api_view(['POST', ])
+def AddRemoveBlock(request):
+    if request.method == "POST":
+        try:
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+
+            is_new_record = False
+
+            if Block.objects.filter(userID=body['user_id'], otherUser=body['other_user_id']).count() == 0:
+                new = Block(userID=body['user_id'], otherUser=body['other_user_id'])
+                new.save()
+                is_new_record = True
+            else:
+                Block.objects.filter(userID=body['user_id'], otherUser=body['other_user_id']).delete()
+                is_new_record = False
+
+            return Response({"is_new_record": is_new_record})
+        except KeyError:
+            return Response({"Null": "Null"})
+        except ValueError:
+            return Response({"Null": "Null"})
+        except:
+            return Response({"Null": "Null"})
+
+
+@api_view(['POST', ])
+def SendPushNotification(request):
+    if request.method == "POST":
+        try:
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+
+            isPushSent = False
+
+            if User.objects.filter(id=body['user_id']).count() > 0:
+                isPushSent = True
+            else:
+                isPushSent = False
+
+            return Response({"isPushSent": isPushSent})
         except KeyError:
             return Response({"Null": "Null"})
         except ValueError:
