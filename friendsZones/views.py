@@ -106,28 +106,81 @@ def UpdateUser(request):
             for i in body["UserData"]:
                 if i == "name":
                     print(body["UserData"]['name'])
+                    user = User.objects.filter(id=user_id)
+                    for j in user:
+                        j.name = body["UserData"]['name']
+                        j.save()
+                        print("Update")
                 elif i == "biography":
                     print(body["UserData"]['biography'])
+                    user = User.objects.filter(id=user_id)
+                    for j in user:
+                        j.biography = body["UserData"]['biography']
+                        j.save()
+                        print("Update")
                 elif i == "gender":
-                    print(body["UserData"]['gender'])
+                    user = User.objects.filter(id=user_id)
+                    for j in user:
+                        j.gender = body["UserData"]['gender']
+                        j.save()
+                        print("Update")
                 elif i == "lookingFor":
-                    print(body["UserData"]['lookingFor'])
+                    user = User.objects.filter(id=user_id)
+                    for j in user:
+                        j.lookingFor = body["UserData"]['lookingFor']
+                        j.save()
+                        print("Update")
                 elif i == "isNotification":
-                    print(body["UserData"]['isNotification'])
+                    user = User.objects.filter(id=user_id)
+                    for j in user:
+                        j.isNotification = body["UserData"]['isNotification']
+                        j.save()
+                        print("Update")
                 elif i == "subscriptionDate":
-                    print(body["UserData"]['subscriptionDate'])
+                    user = User.objects.filter(id=user_id)
+                    for j in user:
+                        j.subscriptionDate = body["UserData"]['subscriptionDate']
+                        j.save()
+                        print("Update")
                 elif i == "profilePictureURL":
-                    print(body["UserData"]['profilePictureURL'])
+                    user = User.objects.filter(id=user_id)
+                    for j in user:
+                        j.profilePictureURL = body["UserData"]['profilePictureURL']
+                        j.save()
+                        print("Update")
                 elif i == "isBeacon":
-                    print(body["UserData"]['isBeacon'])
+                    user = User.objects.filter(id=user_id)
+                    for j in user:
+                        j.isBeacon = body["UserData"]['isBeacon']
+                        j.save()
+                        print("Update")
                 elif i == "AuthenticationToken":
                     print(body["UserData"]['AuthenticationToken'])
+                    user = User.objects.filter(id=user_id)
+                    for j in user:
+                        j.AuthenticationToken = body["UserData"]['AuthenticationToken']
+                        j.save()
+                        print("Update")
                 elif i == "radius":
-                    print(body["UserData"]['radius'])
+                    print(body["UserData"]['AuthenticationToken'])
+                    user = User.objects.filter(id=user_id)
+                    for j in user:
+                        j.AuthenticationToken = body["UserData"]['AuthenticationToken']
+                        j.save()
+                        print("Update")
                 elif i == "facebookToken":
-                    print(body["UserData"]['facebookToken'])
+                    user = User.objects.filter(id=user_id)
+                    for j in user:
+                        j.facebookToken = body["UserData"]['facebookToken']
+                        j.save()
+                        print("Update")
 
-            return Response({"User": True})
+            users = User.objects.filter(id=user_id).values('id', 'name', 'gender', 'lookingFor', 'radius',
+                'isNotification', 'isBeacon', 'subscriptionDate', 'biography', 'profilePictureURL',
+                'AuthenticationToken', 'facebookToken', )
+
+
+            return Response({"DataUser": list(users)[0]})
         except KeyError:
             return Response({"Null": "Null"})
         except ValueError:
