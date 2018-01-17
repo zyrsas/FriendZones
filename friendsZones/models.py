@@ -13,6 +13,8 @@ class User(models.Model):
     profilePictureURL = models.CharField(max_length=200, blank=True)
     AuthenticationToken = models.CharField(max_length=150, blank=True)
     facebookToken = models.CharField(max_length=150, blank=True)
+    latitude = models.CharField(max_length=150, blank=True)
+    longitude = models.CharField(max_length=150, blank=True)
 
     def __str__(self):
         return str(self.id) + str(self.name)

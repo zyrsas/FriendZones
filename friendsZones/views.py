@@ -83,6 +83,8 @@ def GetAllFavorites(request):
                                                                         'profilePictureURL',
                                                                         'AuthenticationToken',
                                                                         'facebookToken',
+                                                                        'latitude',
+                                                                        'longitude',
                                                                         )
                 response_users.append(list(users))
 
@@ -174,10 +176,33 @@ def UpdateUser(request):
                         j.facebookToken = body["UserData"]['facebookToken']
                         j.save()
                         print("Update")
+                elif i == "latitude":
+                    user = User.objects.filter(id=user_id)
+                    for j in user:
+                        j.facebookToken = body["UserData"]['latitude']
+                        j.save()
+                        print("Update")
+                elif i == "longitude":
+                    user = User.objects.filter(id=user_id)
+                    for j in user:
+                        j.facebookToken = body["UserData"]['longitude']
+                        j.save()
+                        print("Update")
 
-            users = User.objects.filter(id=user_id).values('id', 'name', 'gender', 'lookingFor', 'radius',
-                'isNotification', 'isBeacon', 'subscriptionDate', 'biography', 'profilePictureURL',
-                'AuthenticationToken', 'facebookToken', )
+            users = User.objects.filter(id=user_id).values('id',
+                                                           'name',
+                                                           'gender',
+                                                           'lookingFor',
+                                                           'radius',
+                                                           'isNotification',
+                                                           'isBeacon',
+                                                           'subscriptionDate',
+                                                           'biography',
+                                                           'profilePictureURL',
+                                                           'AuthenticationToken',
+                                                           'facebookToken',
+                                                           'latitude',
+                                                           'longitude')
 
 
             return Response({"DataUser": list(users)[0]})
@@ -217,6 +242,84 @@ def AddRemoveBlock(request):
 
 @api_view(['POST', ])
 def SendPushNotification(request):
+    if request.method == "POST":
+        try:
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+
+            isPushSent = False
+
+            if User.objects.filter(id=body['user_id']).count() > 0:
+                isPushSent = True
+            else:
+                isPushSent = False
+
+            return Response({"isPushSent": isPushSent})
+        except KeyError:
+            return Response({"Null": "Null"})
+        except ValueError:
+            return Response({"Null": "Null"})
+        except:
+            return Response({"Null": "Null"})
+
+
+@api_view(['POST', ])
+def inRadius(request):
+    if request.method == "POST":
+        try:
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+
+
+
+            from math import radians, cos, sin, asin, sqrt
+
+            def haversine(lon1, lat1, lon2, lat2):
+                """
+                Calculate the great circle distance between two points 
+                on the earth (specified in decimal degrees)
+                """
+                # convert decimal degrees to radians
+                lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+                # haversine formula
+                dlon = lon2 - lon1
+                dlat = lat2 - lat1
+                a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+                c = 2 * asin(sqrt(a))
+                r = 6371  # Radius of earth in kilometers. Use 3956 for miles
+                return c * r
+
+            center_point = [{'lat': -7.7940023, 'lng': 110.3656535}]
+            test_point = [{'lat': -7.79457, 'lng': 110.36563}]
+
+            lat1 = center_point[0]['lat']
+            lon1 = center_point[0]['lng']
+            lat2 = test_point[0]['lat']
+            lon2 = test_point[0]['lng']
+
+            radius = 0.005  # in kilometer
+
+            a = haversine(lon1, lat1, lon2, lat2)
+
+            print('Distance (km) : ', a)
+            if a <= radius:
+                return Response({"InsideArea": True})
+            else:
+                return Response({"InsideArea": False})
+
+
+            return Response({"isPushSent": True})
+        except KeyError:
+            return Response({"Null": "Null"})
+        except ValueError:
+            return Response({"Null": "Null"})
+        except:
+            return Response({"Null": "Null"})
+
+
+@api_view(['POST', ])
+def uploadPickture(request):
     if request.method == "POST":
         try:
             body_unicode = request.body.decode('utf-8')
