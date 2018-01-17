@@ -1,10 +1,12 @@
-from django.shortcuts import render
+import base64
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from friendsZones.models import User, Favorites, Block
 import uuid
 import random
 import json
+from FriendZones.settings import MEDIA_URL, MEDIA_ROOT
+from django.views.decorators.csrf import csrf_protect
 
 
 @api_view(['POST', ])
@@ -317,7 +319,7 @@ def inRadius(request):
         except:
             return Response({"Null": "Null"})
 
-
+@csrf_protect
 @api_view(['POST', ])
 def uploadPickture(request):
     if request.method == "POST":
@@ -325,14 +327,23 @@ def uploadPickture(request):
             body_unicode = request.body.decode('utf-8')
             body = json.loads(body_unicode)
 
-            isPushSent = False
+            print(body["image_data"])
+            img_name = "img_" + str(body["user_id"]) + ".png"
 
-            if User.objects.filter(id=body['user_id']).count() > 0:
-                isPushSent = True
-            else:
-                isPushSent = False
+            fh = open(MEDIA_ROOT + "/" + img_name, "wb")
+            fh.write(base64.b64decode(body["image_data"]))
+            fh.close()
 
-            return Response({"isPushSent": isPushSent})
+            base_url = "{0}://{1}{2}{3}".format(request.scheme, request.get_host(), MEDIA_URL, img_name)
+
+            user = User.objects.filter(id=body["user_id"])
+            for j in user:
+                j.profilePictureURL = base_url
+                j.save()
+                print("Update")
+
+
+            return Response({"profile_picure_URL": base_url})
         except KeyError:
             return Response({"Null": "Null"})
         except ValueError:
