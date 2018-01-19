@@ -13,6 +13,7 @@ class User(models.Model):
     profilePictureURL = models.CharField(max_length=200, blank=True)
     AuthenticationToken = models.CharField(max_length=150, blank=True)
     facebookToken = models.CharField(max_length=150, blank=True)
+    DeviceType = models.CharField(max_length=100, blank=True)
     latitude = models.CharField(max_length=150, blank=True)
     longitude = models.CharField(max_length=150, blank=True)
 

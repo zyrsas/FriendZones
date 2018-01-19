@@ -6,7 +6,6 @@ import uuid
 import random
 import json
 from FriendZones.settings import MEDIA_URL, MEDIA_ROOT
-from django.views.decorators.csrf import csrf_protect
 
 
 @api_view(['POST', ])
@@ -87,6 +86,7 @@ def GetAllFavorites(request):
                                                                         'facebookToken',
                                                                         'latitude',
                                                                         'longitude',
+                                                                        'DeviceType',
                                                                         )
                 response_users.append(list(users))
 
@@ -166,10 +166,9 @@ def UpdateUser(request):
                         j.save()
                         print("Update")
                 elif i == "radius":
-                    print(body["UserData"]['AuthenticationToken'])
                     user = User.objects.filter(id=user_id)
                     for j in user:
-                        j.AuthenticationToken = body["UserData"]['AuthenticationToken']
+                        j.radius = body["UserData"]['radius']
                         j.save()
                         print("Update")
                 elif i == "facebookToken":
@@ -181,13 +180,19 @@ def UpdateUser(request):
                 elif i == "latitude":
                     user = User.objects.filter(id=user_id)
                     for j in user:
-                        j.facebookToken = body["UserData"]['latitude']
+                        j.latitude = body["UserData"]['latitude']
                         j.save()
                         print("Update")
                 elif i == "longitude":
                     user = User.objects.filter(id=user_id)
                     for j in user:
-                        j.facebookToken = body["UserData"]['longitude']
+                        j.longitude = body["UserData"]['longitude']
+                        j.save()
+                        print("Update")
+                elif i == "DeviceType":
+                    user = User.objects.filter(id=user_id)
+                    for j in user:
+                        j.DeviceType = body["UserData"]['DeviceType']
                         j.save()
                         print("Update")
 
@@ -204,7 +209,8 @@ def UpdateUser(request):
                                                            'AuthenticationToken',
                                                            'facebookToken',
                                                            'latitude',
-                                                           'longitude')
+                                                           'longitude',
+                                                           'DeviceType')
 
 
             return Response({"DataUser": list(users)[0]})
@@ -292,26 +298,51 @@ def inRadius(request):
                 r = 6371  # Radius of earth in kilometers. Use 3956 for miles
                 return c * r
 
-            center_point = [{'lat': -7.7940023, 'lng': 110.3656535}]
-            test_point = [{'lat': -7.79457, 'lng': 110.36563}]
+            center_point = [{'lat': body['latitude'], 'lng':  body['longitude']}]
+            lat1 = float(center_point[0]['lat'])
+            lon1 = float(center_point[0]['lng'])
 
-            lat1 = center_point[0]['lat']
-            lon1 = center_point[0]['lng']
-            lat2 = test_point[0]['lat']
-            lon2 = test_point[0]['lng']
-
-            radius = 0.005  # in kilometer
-
-            a = haversine(lon1, lat1, lon2, lat2)
-
-            print('Distance (km) : ', a)
-            if a <= radius:
-                return Response({"InsideArea": True})
-            else:
-                return Response({"InsideArea": False})
+            tmp = User.objects.filter(id=body['user_id']).values('radius')
+            for i in tmp:
+                if i['radius'] == 0:
+                    radius = float(1.0)
+                else:
+                    radius = float(i['radius'])
 
 
-            return Response({"isPushSent": True})
+
+            users = User.objects.all().values('id',
+                                              'name',
+                                              'gender',
+                                              'lookingFor',
+                                              'radius',
+                                              'isNotification',
+                                              'isBeacon',
+                                              'subscriptionDate',
+                                              'biography',
+                                              'profilePictureURL',
+                                              'AuthenticationToken',
+                                              'facebookToken',
+                                              'latitude',
+                                              'longitude',
+                                              'DeviceType', )
+            response_users = []
+            for user in list(users):
+                if user['latitude'] == "" or user['longitude'] == "":
+                    continue
+                test_point = [{'lat': float(user['latitude']), 'lng': float(user['longitude'])}]
+
+                lat2 = test_point[0]['lat']
+                lon2 = test_point[0]['lng']
+                  # in kilometer
+
+                a = haversine(lon1, lat1, lon2, lat2)
+
+                print('Distance (km) : ', a)
+                if a <= radius:
+                    response_users.append(user)
+
+            return Response({"User": response_users})
         except KeyError:
             return Response({"Null": "Null"})
         except ValueError:
@@ -319,7 +350,7 @@ def inRadius(request):
         except:
             return Response({"Null": "Null"})
 
-@csrf_protect
+
 @api_view(['POST', ])
 def uploadPickture(request):
     if request.method == "POST":
@@ -341,9 +372,7 @@ def uploadPickture(request):
                 j.profilePictureURL = base_url
                 j.save()
                 print("Update")
-
-
-            return Response({"profile_picure_URL": base_url})
+            return Response({"profile_picture_URL": base_url})
         except KeyError:
             return Response({"Null": "Null"})
         except ValueError:
