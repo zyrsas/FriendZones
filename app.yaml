@@ -6,12 +6,30 @@ handlers:
 - url: /
   script: friendsZones.app
 
-- url: /index\.html
+- url: /sing_in/
   script: friendsZones.app
 
-- url: /stylesheets
-  static_dir: stylesheets
+- url: /favorites/
+  script: friendsZones.app
 
+- url: /all_favorites/
+  script: friendsZones.app
+
+- url: /update_user/
+  script: friendsZones.app
+
+- url: /block/
+  script: friendsZones.app
+
+- url: /push/
+  script: friendsZones.app
+
+- url: /inradius/
+  script: friendsZones.app
+
+- url: /upload/
+  script: friendsZones.app
+  
 - url: /admin/.*
   script: admin.app
   login: admin
