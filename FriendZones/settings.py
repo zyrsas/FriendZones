@@ -76,18 +76,7 @@ TEMPLATES = [
     },
 ]
 
-TEMPLATE_CONTEXT_PROCESSORS = [
-    'django_facebook.context_processors.facebook',
-    # and add request if you didn't do so already
-    'django.core.context_processors.request',
-]
 
-AUTHENTICATION_BACKENDS = (
-    'django_facebook.auth_backends.FacebookBackend',
-    'django.contrib.auth.backends.ModelBackend',
-)
-
-AUTH_PROFILE_MODULE = 'django_facebook.FacebookProfile'
 
 WSGI_APPLICATION = 'FriendZones.wsgi.application'
 
