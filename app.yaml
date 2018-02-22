@@ -1,3 +1,4 @@
+application: FriendZones
 runtime: python3
 api_version: 1
 threadsafe: true
@@ -29,7 +30,7 @@ handlers:
 
 - url: /upload/
   script: friendsZones.app
-  
+
 - url: /admin/.*
   script: admin.app
   login: admin
